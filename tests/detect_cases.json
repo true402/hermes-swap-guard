@@ -1,0 +1,724 @@
+[
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx awal@latest trade 0.50 usdc 0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-in ETH --token-out 0x1111111111111111111111111111111111111111 --amount 0.1 --chain ethereum"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "ethereum",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   },
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-in ETH --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 --chain base"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "python3 scripts/tradr-enter.py 0x1111111111111111111111111111111111111111 --score 5 --chain base"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "python3 scripts/tradr-enter.py 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr --score 5 --chain solana"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "solana",
+    "token": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x1111111111111111111111111111111111111111 --chain arbitrum"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/pool-info.ts --token0 ETH --token1 0x1111111111111111111111111111111111111111 --chain base"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "cast balance 0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "ls -la"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy --token PEPE 0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bankr prompt \"Buy $20 of PEPE on Base\""
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx awal@latest trade 1 usdc 0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "bsc",
+  "expected": [
+   {
+    "chain": "bsc",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913; bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 && bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 || bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 | bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\nbot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 $(bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 `bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bridge --chain arbitrum ok; npx awal@latest trade 1 usdc 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-in 0x5555555555555555555555555555555555555555 --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 --chain base"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx awal@latest trade 100 0x5555555555555555555555555555555555555555 usdc"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 # --token-in 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": true
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot swap --token-in 0x5555555555555555555555555555555555555555 --token-out 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "othertool trade 1 0x5555555555555555555555555555555555555555 usdc"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "npx tsx src/swap.ts --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 & bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 --chain base --chain arbitrum"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 --chain base --chain bsc"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "bsc",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 --chain solana"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy --memo \" #x\" --chain bsc 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "bsc",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 # --chain arbitrum"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 $'\\'' # --chain arbitrum --token-in 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": true
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": true
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot swap --token-in 0x5555555555555555555555555555555555555555 --token-out 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 \""
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": true
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy \"a;\" 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 # --chain bsc"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "bsc",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x5555555555555555555555555555555555555555 # --chain solana"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "echo --network eth; bot buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   },
+   {
+    "chain": "unsupported",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy 0x1111111111111111111111111111111111111111 0x6666666666666666666666666666666666666666 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   },
+   {
+    "chain": "base",
+    "token": "0x6666666666666666666666666666666666666666",
+    "maybeSold": false
+   },
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy --mint 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "solana",
+    "token": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "exec",
+  "params": {
+   "command": "bot buy --mint=7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr --chain base"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "notes_write",
+  "params": {
+   "command": "buy 0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "swap",
+  "params": {
+   "input": "swap tokens please",
+   "tokenOut": "0x5555555555555555555555555555555555555555"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x5555555555555555555555555555555555555555",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "uniswap__swap",
+  "params": {
+   "tokenIn": "0x2222222222222222222222222222222222222222",
+   "tokenOut": "0x1111111111111111111111111111111111111111",
+   "chainId": 8453
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "base",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "jupiter_swap",
+  "params": {
+   "inputMint": "So11111111111111111111111111111111111111112",
+   "outputMint": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+   "amount": 1
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "solana",
+    "token": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "buy_token",
+  "params": {
+   "order": {
+    "token": "0x1111111111111111111111111111111111111111",
+    "chain": "bsc"
+   }
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "bsc",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "buy_token",
+  "params": {
+   "recipient": "0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "swap",
+  "params": {
+   "walletAddress": "0x1111111111111111111111111111111111111111",
+   "tokenOut": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "get_price",
+  "params": {
+   "token": "0x1111111111111111111111111111111111111111"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "read",
+  "params": {
+   "path": "/tmp/x"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "swap",
+  "params": {
+   "tokenOut": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+   "chain": "base"
+  },
+  "defaultChain": "base",
+  "expected": []
+ },
+ {
+  "tool": "swap",
+  "params": {
+   "tokenOut": "0x1111111111111111111111111111111111111111",
+   "chain": "polygon"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "unsupported",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ },
+ {
+  "tool": "mm_swap_execute",
+  "params": {
+   "to_token": "0x1111111111111111111111111111111111111111",
+   "network": "eth"
+  },
+  "defaultChain": "base",
+  "expected": [
+   {
+    "chain": "ethereum",
+    "token": "0x1111111111111111111111111111111111111111",
+    "maybeSold": false
+   }
+  ]
+ }
+]

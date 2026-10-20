@@ -1,0 +1,21 @@
+name: true402-swap-guard
+version: 1.0.0
+manifest_version: 2
+requires_hermes: ">=0.22.0"
+description: Blocks token buys when true402 finds a honeypot or a rug in progress (Base, Ethereum, BSC, Solana). One pre_tool_call hook in front of every trading tool and terminal command.
+license: MIT
+homepage: https://true402.dev
+tags: [security, trading, crypto, honeypot, x402]
+provides_hooks:
+  - pre_tool_call
+python_dependencies:
+  - "requests>=2.28,<3"
+  - "eth-account>=0.11,<0.14"
+config_schema:
+  default_chain: {type: str, choices: [base, ethereum, bsc], default: base, description: "Chain assumed for a 0x address when the trade names none"}
+  on_caution: {type: str, choices: [allow, ask], default: allow, description: "On a caution verdict: let the trade through, or ask you"}
+  on_unchecked: {type: str, choices: [allow, ask, block], default: allow, description: "When a token could not be checked (API unreachable, free checks used up)"}
+  allow_tokens: {type: list, default: [], description: "Token addresses never checked"}
+  max_amount_usd: {type: float, default: 0.02, description: "Never pay more than this for one check (USDC)"}
+  max_paid_checks_per_day: {type: int, default: 50, description: "Paid checks per UTC day; after that only free checks run"}
+  payer_private_key: {type: secret, env: TRUE402_PAYER_PRIVATE_KEY, required: false, description: "Optional. A dedicated, low-balance Base wallet key holding a little USDC, for checks beyond the free daily ones"}
