@@ -8,7 +8,10 @@ allowance; with one, pay_stall pays the exact quoted price over x402 (USDC on Ba
 from __future__ import annotations
 
 import json
+import os
+import threading
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Optional
@@ -79,10 +82,30 @@ def solana_verdict(r: dict) -> Verdict:
 
 
 class FileSpendStore:
-    """The day's paid-check count, kept OUTSIDE the process so a restart does not reset the limit."""
+    """The day's paid-check count, kept OUTSIDE the process so a restart does not reset the limit.
+
+    `locked()` serialises read-compare-write across threads (checks run in parallel) AND processes
+    (several Hermes sessions may share one data directory, via an OS file lock); writes are atomic
+    (temp file + os.replace), so a crash mid-write cannot reset the count.
+    """
+
+    _thread_lock = threading.Lock()
 
     def __init__(self, path: Path):
         self.path = path
+
+    @contextmanager
+    def locked(self):
+        with self._thread_lock:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.path.with_suffix(".lock"), "a") as fh:
+                try:
+                    import fcntl
+
+                    fcntl.flock(fh, fcntl.LOCK_EX)
+                except ImportError:  # Windows: the thread lock still covers this process
+                    pass
+                yield
 
     def read(self) -> dict:
         try:
@@ -94,19 +117,31 @@ class FileSpendStore:
 
     def write(self, v: dict) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(v))
-        self.path.chmod(0o600)
+        tmp = self.path.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
+        tmp.write_text(json.dumps(v))
+        tmp.chmod(0o600)
+        os.replace(tmp, self.path)
 
 
 class MemorySpendStore:
     def __init__(self):
         self.v = {"day": "", "count": 0}
+        self._lock = threading.Lock()
+
+    @contextmanager
+    def locked(self):
+        with self._lock:
+            yield
 
     def read(self) -> dict:
         return self.v
 
     def write(self, v: dict) -> None:
         self.v = v
+
+
+class LimitReached(RuntimeError):
+    pass
 
 
 @dataclass
@@ -145,12 +180,16 @@ def create_checker(cfg: CheckConfig, store, now: Callable[[], float] = time.time
         # An OVERALL spending limit, counted per UTC day in a file BEFORE paying (a failed payment still
         # counts), so a restart does not reset it. If the count cannot be saved, no payment is made.
         today = time.strftime("%Y-%m-%d", time.gmtime(now()))
-        saved = store.read()
-        paid_today = saved["count"] if saved["day"] == today else 0
-        if paid_today >= cfg.max_paid_checks_per_day:
-            raise RuntimeError(f"the daily limit of {cfg.max_paid_checks_per_day} paid checks is reached (max_paid_checks_per_day)")
         try:
-            store.write({"day": today, "count": paid_today + 1})
+            # Read, compare and write under one lock: parallel checks must not both see the last slot.
+            with store.locked():
+                saved = store.read()
+                paid_today = saved["count"] if saved["day"] == today else 0
+                if paid_today >= cfg.max_paid_checks_per_day:
+                    raise LimitReached(f"the daily limit of {cfg.max_paid_checks_per_day} paid checks is reached (max_paid_checks_per_day)")
+                store.write({"day": today, "count": paid_today + 1})
+        except LimitReached:
+            raise
         except Exception as e:  # noqa: BLE001
             raise RuntimeError("could not record the paid-check count, so no payment was made") from e
         from .x402 import PayOpts

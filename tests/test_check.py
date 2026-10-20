@@ -77,10 +77,41 @@ def test_daily_paid_limit_survives_a_restart_and_resets_next_day(monkeypatch, tm
 def test_no_payment_when_the_count_cannot_be_saved(monkeypatch):
     monkeypatch.setattr(chk.requests, "post", lambda *a, **k: Resp(402))
     monkeypatch.setattr(chk, "pay_stall", lambda *a, **k: pytest.fail("must not pay"))
-    class Broken:
+    class Broken(MemorySpendStore):
         def read(self):
             return {"day": "", "count": 0}
         def write(self, v):
             raise OSError("read-only disk")
     with pytest.raises(RuntimeError, match="no payment was made"):
         create_checker(CheckConfig(payer_private_key=KEY), Broken())(TradeTarget("base", ADDR))
+
+
+def test_parallel_paid_checks_never_exceed_the_daily_limit(monkeypatch, tmp_path):
+    """Checks run in parallel threads: the read-compare-write must be atomic (commit review, 2026-10-20)."""
+    import threading
+    monkeypatch.setattr(chk.requests, "post", lambda *a, **k: Resp(402))
+    paid = []
+    lock = threading.Lock()
+    def pay(path, payload, opts):
+        with lock:
+            paid.append(1)
+        return {"verdict": {"rating": "ok"}}
+    monkeypatch.setattr(chk, "pay_stall", pay)
+    # A store whose read is slow, so unsynchronised threads WOULD all read the same count.
+    class Slow(FileSpendStore):
+        def read(self):
+            v = super().read()
+            import time as _t; _t.sleep(0.01)
+            return v
+    check = create_checker(CheckConfig(payer_private_key=KEY, max_paid_checks_per_day=3), Slow(tmp_path / "spend.json"))
+    errors = []
+    def run():
+        try:
+            check(TradeTarget("base", ADDR))
+        except RuntimeError as e:
+            errors.append(str(e))
+    threads = [threading.Thread(target=run) for _ in range(10)]
+    for t in threads: t.start()
+    for t in threads: t.join()
+    assert len(paid) == 3 and len(errors) == 7
+    assert all("daily limit" in e for e in errors)
