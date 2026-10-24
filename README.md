@@ -4,9 +4,14 @@
 
 It registers one `pre_tool_call` hook, so it sits in front of *every* way your agent can trade — terminal commands, MCP servers, plugin tools — whatever skill it is following. A skill the agent forgets to follow cannot skip it. The same plugin exists for OpenClaw: [`@true402.dev/openclaw-swap-guard`](https://github.com/true402/openclaw-swap-guard).
 
-```bash
-hermes plugins install true402/hermes-swap-guard/true402_swap_guard --enable
-```
+Two editions, same plugin name, same detection and decision code (a test holds them byte-identical):
+
+| Edition | Folder | Checks | Install |
+|---|---|---|---|
+| **Free** (the Hermes catalog build) | `true402_swap_guard_free` | true402's small daily free allowance only. Never pays, holds no wallet key, no `eth-account`. | `hermes plugins install true402/hermes-swap-guard/true402_swap_guard_free --enable` |
+| **Full** | `true402_swap_guard` | Free checks, then optional paid checks from a dedicated wallet (below). | `hermes plugins install true402/hermes-swap-guard/true402_swap_guard --enable` |
+
+With the free edition, once the day's free checks are used up a token counts as "could not be checked" — let through with a warning by default, or held/blocked with `on_unchecked`. The sections on paying below apply to the full edition only.
 
 ## What it does
 
@@ -27,7 +32,7 @@ Command parsing fails closed: a token is checked on the default chain and on eve
 
 Under unattended runs (cron, the messaging gateway) an approval request fails closed, as Hermes' approval gate always does: nothing is auto-approved.
 
-## Paying for checks
+## Paying for checks (full edition)
 
 No setup is needed for a few checks a day: the guard uses true402's free daily allowance.
 
