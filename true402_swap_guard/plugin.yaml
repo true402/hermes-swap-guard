@@ -9,7 +9,7 @@ tags: [security, trading, crypto, honeypot, x402]
 provides_hooks:
   - pre_tool_call
 python_dependencies:
-  - "requests>=2.28,<3"
+  - "requests>=2.33.0,<3"
   - "eth-account>=0.11,<0.14"
 config_schema:
   default_chain: {type: str, choices: [base, ethereum, bsc], default: base, description: "Chain assumed for a 0x address when the trade names none"}
