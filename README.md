@@ -34,9 +34,9 @@ Under unattended runs (cron, the messaging gateway) an approval request fails cl
 
 ## Paying for checks (full edition)
 
-No setup is needed for a few checks a day: the guard uses true402's free daily allowance.
+No setup is needed for a few checks a day: the guard uses true402's free daily allowance. When it is used up (it resets at 00:00 UTC), tokens go unchecked and the guard says so in one warning a day, with what to do next.
 
-For more, give it a **dedicated, low-balance** Base wallet holding a little USDC (gas is sponsored), as the plugin's `payer_private_key` secret (environment name `TRUE402_PAYER_PRIVATE_KEY`). It is read through Hermes' secret route, never from a file, and never a generic `PAYER_PRIVATE_KEY` another tool may have set. Paid checks also need the declared `eth-account` dependency; without it the guard runs free checks only.
+For more, give it a **dedicated, low-balance** Base wallet holding a little USDC (gas is sponsored; [how to set one up](https://true402.dev/buy#fund)), as the plugin's `payer_private_key` secret (environment name `TRUE402_PAYER_PRIVATE_KEY`). It is read through Hermes' secret route, never from a file, and never a generic `PAYER_PRIVATE_KEY` another tool may have set. Paid checks also need the declared `eth-account` dependency; without it the guard runs free checks only.
 
 Spending is bounded twice: **at most $0.02 per check** (`max_amount_usd`) and **at most 50 paid checks per UTC day** (`max_paid_checks_per_day`) — at most $1.00 a day by default. The day's count is kept in the plugin's data directory (`<hermes home>/plugin-data/true402-swap-guard/spend.json`), so restarting Hermes does not reset it; if that file cannot be written, no payment is made.
 
