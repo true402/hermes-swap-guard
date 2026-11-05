@@ -45,8 +45,11 @@ def test_free_check_path_ua_and_402(monkeypatch):
     assert v.level == "danger" and seen["url"] == "https://true402.dev/api/v1/ethereum/token-report"
     assert seen["ua"].startswith("true402-hermes-guard/") and seen["body"] == {"token": ADDR}
     monkeypatch.setattr(chk.requests, "post", lambda *a, **k: Resp(402))
-    with pytest.raises(RuntimeError, match="TRUE402_PAYER_PRIVATE_KEY"):
-        create_checker(CheckConfig(), MemorySpendStore())(TradeTarget("base", ADDR))
+    with pytest.raises(chk.FreeChecksUsedUp, match="^the free daily checks are used up$") as e:
+        create_checker(CheckConfig(max_amount_usd=0.01, max_paid_checks_per_day=7), MemorySpendStore())(TradeTarget("base", ADDR))
+    h = e.value.help
+    assert "reset at 00:00 UTC" in h and "TRUE402_PAYER_PRIVATE_KEY" in h
+    assert "at most $0.01 (max_amount_usd)" in h and "at most 7 a day" in h and "https://true402.dev/buy#fund" in h
 
 
 def test_with_a_key_a_free_answer_spends_nothing(monkeypatch):

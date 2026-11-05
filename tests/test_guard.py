@@ -116,6 +116,25 @@ def test_unchecked_trades_warn_once_per_reason():
     assert len(warned) == 2
 
 
+def test_help_is_said_once_per_utc_day_and_whole():
+    warned = []
+    t = [1793790000.0]  # 2026-11-04 10:20 UTC
+    help_text = "true402 swap guard: free checks used up. " + "x" * 300 + " Setup: https://true402.dev/buy#fund"
+    def down(x):
+        e = RuntimeError("the free daily checks are used up")
+        e.help = help_text
+        raise e
+    g = Guard(down, GuardConfig(), warn=warned.append, now=lambda: t[0])
+    g("terminal", BUY)
+    t[0] += 1800
+    g("terminal", BUY)
+    helps = [w for w in warned if w.endswith("buy#fund")]
+    assert helps == [help_text]
+    t[0] += 86400
+    g("terminal", BUY)
+    assert len([w for w in warned if w.endswith("buy#fund")]) == 2
+
+
 def test_clean_strips_control_and_bidi_and_bounds_length():
     assert clean("a\x1b[31mb\u202ec\n d") == "a [31mb c d"
     assert len(clean("x" * 500)) == 160

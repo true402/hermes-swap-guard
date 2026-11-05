@@ -50,8 +50,9 @@ def test_free_checker_never_pays(monkeypatch):
     assert chk.create_checker()(TradeTarget("bsc", "0x" + "1" * 40)).level == "danger"
     assert seen["url"].endswith("/v1/bsc/token-report") and seen["ua"].startswith("true402-hermes-guard-free/")
     monkeypatch.setattr(chk.requests, "post", lambda *a, **k: Resp(402))
-    with pytest.raises(RuntimeError, match="free daily checks are used up"):
+    with pytest.raises(RuntimeError, match="free daily checks are used up") as e:
         chk.create_checker()(TradeTarget("base", "0x" + "1" * 40))
+    assert "install the full edition" in e.value.help and "https://true402.dev/buy#fund" in e.value.help
 
 
 def test_registers_the_hook_and_reads_no_secret(monkeypatch):

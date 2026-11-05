@@ -5,6 +5,6 @@ one file that differs per package.
 """
 
 CLIENT_ID = "hermes-guard"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 PACKAGE = "true402-swap-guard"
 INSTALL = "hermes plugins update true402-swap-guard"

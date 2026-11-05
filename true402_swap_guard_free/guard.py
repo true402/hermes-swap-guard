@@ -57,6 +57,7 @@ class Guard:
         self.allow = {a.lower() for a in cfg.allow_tokens}
         self.cache: dict = {}
         self.warned: dict = {}
+        self.help_day = ""
         self.pool = ThreadPoolExecutor(max_workers=MAX_TOKENS * 4, thread_name_prefix="true402-guard")
 
     def _warn_once(self, why: str) -> None:
@@ -67,6 +68,14 @@ class Guard:
         outcome = {"block": "blocked", "ask": "held for approval"}.get(self.cfg.on_unchecked, "allowed unchecked")
         self.warn(f"true402 swap guard: a token could not be checked ({why}); the trade was {outcome}.")
 
+    def _help_once(self, help_text: str) -> None:
+        """A checker error may carry `help`: what the user can do about it. Said once per UTC day."""
+        day = time.strftime("%Y-%m-%d", time.gmtime(self.now()))
+        if self.help_day == day:
+            return
+        self.help_day = day
+        self.warn(clean(help_text, 600))
+
     def _verdict(self, t: TradeTarget) -> Verdict:
         key = f"{t.chain}:{t.token.lower()}"
         hit = self.cache.get(key)
@@ -76,6 +85,9 @@ class Guard:
             v = self.check(t)
         except Exception as e:  # noqa: BLE001 — any failure is "could not check", never a crash
             v = Verdict("unchecked", [clean(str(e))])
+            help_text = getattr(e, "help", None)
+            if isinstance(help_text, str):
+                self._help_once(help_text)
         if v.level != "unchecked":  # never cache "unchecked": the next call may get through
             self.cache[key] = (self.now(), v)
         return v

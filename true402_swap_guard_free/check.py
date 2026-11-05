@@ -56,6 +56,22 @@ def solana_verdict(r: dict) -> Verdict:
     return Verdict("unchecked", ["no risk level in the answer"])
 
 
+class FreeChecksUsedUp(RuntimeError):
+    """The free allowance ran out. `help` is the once-a-day line saying what the user can do."""
+
+    def __init__(self, help_text: str):
+        super().__init__("the free daily checks are used up")
+        self.help = help_text
+
+
+FREE_EDITION_HELP = (
+    "true402 swap guard (free edition): today's free checks are used up (they reset at 00:00 UTC), so tokens are "
+    "not being checked. To check every trade, install the full edition (true402_swap_guard, in "
+    "https://github.com/true402/hermes-swap-guard) and give it a dedicated Base wallet holding a little USDC. "
+    "Setup: https://true402.dev/buy#fund"
+)
+
+
 def create_checker(base_url: str = BASE_URL) -> Callable[[TradeTarget], Verdict]:
     ua = f"true402-{CLIENT_ID}/{VERSION} (+https://true402.dev)"
 
@@ -64,7 +80,7 @@ def create_checker(base_url: str = BASE_URL) -> Callable[[TradeTarget], Verdict]
         res = requests.post(base_url.rstrip("/") + path, json={"token": t.token}, headers={"user-agent": ua},
                             timeout=TIMEOUT_S, allow_redirects=False)
         if res.status_code == 402:
-            raise RuntimeError("the free daily checks are used up")
+            raise FreeChecksUsedUp(FREE_EDITION_HELP)
         if not 200 <= res.status_code < 300:
             raise RuntimeError(f"true402 answered HTTP {res.status_code}")
         body = res.json()

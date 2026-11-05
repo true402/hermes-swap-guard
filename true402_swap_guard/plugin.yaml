@@ -1,5 +1,5 @@
 name: true402-swap-guard
-version: 1.0.0
+version: 1.0.1
 manifest_version: 2
 requires_hermes: ">=0.22.0"
 description: Blocks token buys when true402 finds a honeypot or a rug in progress (Base, Ethereum, BSC, Solana). One pre_tool_call hook in front of every trading tool and terminal command.

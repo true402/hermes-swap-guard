@@ -152,6 +152,16 @@ class CheckConfig:
     max_paid_checks_per_day: int = DEFAULT_MAX_PAID_CHECKS_PER_DAY
 
 
+class FreeChecksUsedUp(RuntimeError):
+    """The free allowance ran out and there is no payer key. The message stays short (it becomes the
+    "could not be checked" reason); `help` is the once-a-day line saying how to keep checking. It is
+    OUR text, built from this config, never text from the server."""
+
+    def __init__(self, help_text: str):
+        super().__init__("the free daily checks are used up")
+        self.help = help_text
+
+
 def create_checker(cfg: CheckConfig, store, now: Callable[[], float] = time.time) -> Callable[[TradeTarget], Verdict]:
     ua = f"true402-{CLIENT_ID}/{VERSION} (+https://true402.dev)"
 
@@ -175,7 +185,13 @@ def create_checker(cfg: CheckConfig, store, now: Callable[[], float] = time.time
         if body is not None:
             return to_verdict(t, body)
         if not cfg.payer_private_key:
-            raise RuntimeError("the free daily checks are used up - set TRUE402_PAYER_PRIVATE_KEY to pay per check")
+            raise FreeChecksUsedUp(
+                "true402 swap guard: today's free checks are used up (they reset at 00:00 UTC), so tokens are not being "
+                "checked. To keep checking, set TRUE402_PAYER_PRIVATE_KEY to a dedicated Base wallet holding a little USDC: "
+                f"each paid check costs at most ${cfg.max_amount_usd:g} (max_amount_usd), at most "
+                f"{cfg.max_paid_checks_per_day} a day (max_paid_checks_per_day), and no ETH is needed. "
+                "Setup: https://true402.dev/buy#fund"
+            )
 
         # An OVERALL spending limit, counted per UTC day in a file BEFORE paying (a failed payment still
         # counts), so a restart does not reset it. If the count cannot be saved, no payment is made.
